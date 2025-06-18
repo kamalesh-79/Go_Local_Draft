@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Eye,
   EyeOff,
-  Mail,
+  User,
   Lock,
   MapPin,
   Loader,
@@ -18,7 +18,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -39,25 +39,26 @@ const Login: React.FC = () => {
     setError("");
     setSuccess("");
 
-    if (!formData.email || !formData.password) {
+    if (!formData.username || !formData.password) {
       setError("Please fill in all fields");
       return;
     }
 
     try {
       if (activeTab === "signin") {
-        const success = await login(formData.email, formData.password);
+        // For demo, we'll use username as email for login
+        const success = await login(formData.username, formData.password);
         if (success) {
           setSuccess("Login successful! Redirecting...");
           setTimeout(() => {
             navigate(from, { replace: true });
           }, 1000);
         } else {
-          setError("Invalid email or password");
+          setError("Invalid username or password");
         }
       } else {
         // For demo - redirect to appropriate signup page
-        if (formData.email.includes("provider")) {
+        if (formData.username.includes("provider")) {
           navigate("/signup/helper");
         } else {
           navigate("/signup/customer");
@@ -136,71 +137,71 @@ const Login: React.FC = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+          {activeTab === "signin" ? (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Username Field */}
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
+                  Username
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    required
+                    value={formData.username}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    placeholder="Enter your username"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Forgot Password (for signin only) */}
-            {activeTab === "signin" && (
-              <div className="flex items-center justify-between">
+              {/* Password Field */}
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
@@ -210,69 +211,79 @@ const Login: React.FC = () => {
                     Remember me
                   </span>
                 </label>
-                <button
-                  type="button"
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Forgot password?
-                </button>
               </div>
-            )}
 
-            {/* Submit Button */}
-            <div className="space-y-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {loading ? (
-                  <>
-                    <Loader className="animate-spin h-5 w-5 mr-2" />
-                    {activeTab === "signin" ? "Signing In..." : "Signing Up..."}
-                  </>
-                ) : activeTab === "signin" ? (
-                  "Sign In"
-                ) : (
-                  "Sign Up"
+              {/* Submit Button */}
+              <div className="space-y-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {loading ? (
+                    <>
+                      <Loader className="animate-spin h-5 w-5 mr-2" />
+                      Signing In...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
+                </button>
+
+                {error && (
+                  <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                    <XCircle className="h-5 w-5" />
+                    <span className="text-sm">{error}</span>
+                  </div>
                 )}
-              </button>
 
-              {error && (
-                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
-                  <XCircle className="h-5 w-5" />
-                  <span className="text-sm">{error}</span>
-                </div>
-              )}
+                {success && (
+                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="text-sm">{success}</span>
+                  </div>
+                )}
 
-              {success && (
-                <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg">
-                  <CheckCircle className="h-5 w-5" />
-                  <span className="text-sm">{success}</span>
+                {/* Demo Credentials */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">
+                    Demo Credentials:
+                  </h4>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <p>
+                      <strong>Customer:</strong> customer / password123
+                    </p>
+                    <p>
+                      <strong>Provider:</strong> provider / password123
+                    </p>
+                    <p>
+                      <strong>Admin:</strong> admin / admin123
+                    </p>
+                  </div>
                 </div>
-              )}
-
-              {/* Demo Credentials */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-medium text-gray-900 mb-2">
-                  Demo Credentials:
-                </h4>
-                <div className="space-y-1 text-sm text-gray-600">
-                  <p>
-                    <strong>Customer:</strong> customer@example.com /
-                    password123
-                  </p>
-                  <p>
-                    <strong>Provider:</strong> provider@example.com /
-                    password123
-                  </p>
-                  <p>
-                    <strong>Admin:</strong> admin@example.com / admin123
-                  </p>
-                </div>
+              </div>
+            </form>
+          ) : (
+            <div className="space-y-6">
+              <p className="text-gray-600 text-center">
+                Choose your account type to get started
+              </p>
+              <div className="space-y-3">
+                <Link
+                  to="/signup/customer"
+                  className="block w-full bg-green-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-700 transition-all duration-300 transform hover:scale-105 text-center"
+                >
+                  Sign Up as Customer
+                </Link>
+                <Link
+                  to="/signup/helper"
+                  className="block w-full bg-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 text-center"
+                >
+                  Sign Up as Service Provider
+                </Link>
               </div>
             </div>
-          </form>
+          )}
 
           {/* Alternative Actions */}
           <div className="mt-8 text-center">
@@ -287,31 +298,15 @@ const Login: React.FC = () => {
                 </button>
               </p>
             ) : (
-              <>
-                <p className="text-gray-600 mb-4">
-                  Already have an account?{" "}
-                  <button
-                    onClick={() => setActiveTab("signin")}
-                    className="text-blue-600 hover:text-blue-800 font-medium"
-                  >
-                    Sign in here
-                  </button>
-                </p>
-                <div className="space-y-3">
-                  <Link
-                    to="/signup/customer"
-                    className="block w-full bg-green-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
-                  >
-                    Sign Up as Customer
-                  </Link>
-                  <Link
-                    to="/signup/helper"
-                    className="block w-full bg-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-purple-700 transition-all duration-300 transform hover:scale-105"
-                  >
-                    Sign Up as Service Provider
-                  </Link>
-                </div>
-              </>
+              <p className="text-gray-600">
+                Already have an account?{" "}
+                <button
+                  onClick={() => setActiveTab("signin")}
+                  className="text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Sign in here
+                </button>
+              </p>
             )}
           </div>
 

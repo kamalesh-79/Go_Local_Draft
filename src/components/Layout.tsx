@@ -5,11 +5,6 @@ import {
   X,
   MapPin,
   User,
-  Bell,
-  Heart,
-  Shield,
-  Zap,
-  Star,
   LogOut,
   Settings,
   Calendar,
@@ -23,7 +18,6 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [notifications, setNotifications] = useState(3);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -53,6 +47,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const handleNavClick = (path: string) => {
+    navigate(path);
+    // Scroll to top when navigating
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -76,7 +77,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex justify-between h-20">
             {/* Logo */}
             <div className="flex items-center">
-              <Link to="/" className="flex items-center space-x-3 group">
+              <button 
+                onClick={() => handleNavClick("/")}
+                className="flex items-center space-x-3 group"
+              >
                 <div className="relative">
                   <div className="w-12 h-12 bg-premium-gradient rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-glow">
                     <MapPin className="h-7 w-7 text-white" />
@@ -91,15 +95,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     Premium Services
                   </div>
                 </div>
-              </Link>
+              </button>
             </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
-                <Link
+                <button
                   key={item.path}
-                  to={item.path}
+                  onClick={() => handleNavClick(item.path)}
                   className={`relative px-4 py-2 text-sm font-semibold transition-all duration-300 hover-lift ${
                     isActive(item.path)
                       ? "text-blue-600"
@@ -110,24 +114,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   {isActive(item.path) && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-premium-gradient rounded-full"></div>
                   )}
-                </Link>
+                </button>
               ))}
 
               {/* Action Buttons */}
               <div className="flex items-center space-x-4">
-                <button className="relative p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 hover-lift">
-                  <Bell className="h-5 w-5" />
-                  {notifications > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-bounce-in">
-                      {notifications}
-                    </span>
-                  )}
-                </button>
-
-                <button className="p-3 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 hover-lift">
-                  <Heart className="h-5 w-5" />
-                </button>
-
                 {isAuthenticated && user ? (
                   <div className="relative">
                     <button
@@ -166,29 +157,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </div>
 
                         <div className="py-2">
-                          <Link
-                            to={
-                              user.role === "admin"
+                          <button
+                            onClick={() => {
+                              const dashboardPath = user.role === "admin"
                                 ? "/admin-dashboard"
                                 : user.role === "provider"
                                   ? "/provider-dashboard"
-                                  : "/customer-dashboard"
-                            }
-                            className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
-                            onClick={() => setShowUserMenu(false)}
+                                  : "/customer-dashboard";
+                              handleNavClick(dashboardPath);
+                              setShowUserMenu(false);
+                            }}
+                            className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors w-full text-left"
                           >
                             <Calendar className="h-4 w-4" />
                             <span>Dashboard</span>
-                          </Link>
+                          </button>
 
-                          <Link
-                            to="/profile"
-                            className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
-                            onClick={() => setShowUserMenu(false)}
+                          <button
+                            onClick={() => {
+                              handleNavClick("/profile");
+                              setShowUserMenu(false);
+                            }}
+                            className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors w-full text-left"
                           >
                             <Settings className="h-4 w-4" />
                             <span>Settings</span>
-                          </Link>
+                          </button>
 
                           <button
                             onClick={() => {
@@ -207,19 +201,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </div>
                 ) : (
                   <>
-                    <Link
-                      to="/login"
+                    <button
+                      onClick={() => handleNavClick("/login")}
                       className="p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 hover-lift"
                     >
                       <User className="h-5 w-5" />
-                    </Link>
+                    </button>
 
-                    <Link
-                      to="/signup/customer"
+                    <button
+                      onClick={() => handleNavClick("/signup/customer")}
                       className="btn-premium text-white px-6 py-3 rounded-2xl font-semibold hover-lift shadow-glow"
                     >
                       Get Started
-                    </Link>
+                    </button>
                   </>
                 )}
               </div>
@@ -246,18 +240,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="md:hidden bg-white/95 backdrop-blur-20 border-t border-gray-200 animate-slide-down z-[99]">
             <div className="px-4 py-6 space-y-4">
               {navItems.map((item) => (
-                <Link
+                <button
                   key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block px-4 py-3 text-base font-semibold rounded-xl transition-all duration-300 ${
+                  onClick={() => handleNavClick(item.path)}
+                  className={`block w-full text-left px-4 py-3 text-base font-semibold rounded-xl transition-all duration-300 ${
                     isActive(item.path)
                       ? "text-blue-600 bg-blue-50"
                       : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                   }`}
                 >
                   {item.label}
-                </Link>
+                </button>
               ))}
 
               <div className="pt-4">
@@ -291,20 +284,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center space-x-4">
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMenuOpen(false)}
+                    <button
+                      onClick={() => handleNavClick("/login")}
                       className="flex-1 text-center px-4 py-3 text-blue-600 border-2 border-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300"
                     >
                       Login
-                    </Link>
-                    <Link
-                      to="/signup/customer"
-                      onClick={() => setIsMenuOpen(false)}
+                    </button>
+                    <button
+                      onClick={() => handleNavClick("/signup/customer")}
                       className="flex-1 text-center btn-premium text-white px-4 py-3 rounded-xl font-semibold"
                     >
                       Sign Up
-                    </Link>
+                    </button>
                   </div>
                 )}
               </div>
@@ -340,22 +331,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 businesses with our premium platform.
               </p>
 
-              {/* Trust Indicators */}
-              <div className="flex items-center space-x-6 mb-6">
-                <div className="flex items-center space-x-2">
-                  <Shield className="h-5 w-5 text-green-400" />
-                  <span className="text-sm text-gray-300">Verified Secure</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Star className="h-5 w-5 text-yellow-400" />
-                  <span className="text-sm text-gray-300">4.9 Rating</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Zap className="h-5 w-5 text-blue-400" />
-                  <span className="text-sm text-gray-300">Fast Service</span>
-                </div>
-              </div>
-
               {/* Social Links */}
               <div className="flex space-x-4">
                 {["Facebook", "Twitter", "Instagram", "LinkedIn"].map(
@@ -377,12 +352,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <ul className="space-y-3 text-gray-400">
                 {navItems.map((item) => (
                   <li key={item.path}>
-                    <Link
-                      to={item.path}
+                    <button
+                      onClick={() => handleNavClick(item.path)}
                       className="hover:text-white transition-colors hover:translate-x-1 transform duration-300 inline-block"
                     >
                       {item.label}
-                    </Link>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -393,28 +368,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h3 className="font-semibold mb-4 text-lg">Join Our Platform</h3>
               <ul className="space-y-3 text-gray-400">
                 <li>
-                  <Link
-                    to="/signup/helper"
+                  <button
+                    onClick={() => handleNavClick("/signup/helper")}
                     className="hover:text-white transition-colors hover:translate-x-1 transform duration-300 inline-block"
                   >
                     Become a Provider
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link
-                    to="/signup/customer"
+                  <button
+                    onClick={() => handleNavClick("/signup/customer")}
                     className="hover:text-white transition-colors hover:translate-x-1 transform duration-300 inline-block"
                   >
                     Find Services
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard"
+                  <button
+                    onClick={() => handleNavClick("/dashboard")}
                     className="hover:text-white transition-colors hover:translate-x-1 transform duration-300 inline-block"
                   >
                     Dashboard
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -429,24 +404,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </p>
 
               <div className="flex items-center space-x-6 mt-4 md:mt-0">
-                <Link
-                  to="/privacy"
+                <button
+                  onClick={() => handleNavClick("/privacy")}
                   className="text-gray-400 hover:text-white transition-colors text-sm"
                 >
                   Privacy Policy
-                </Link>
-                <Link
-                  to="/terms"
+                </button>
+                <button
+                  onClick={() => handleNavClick("/terms")}
                   className="text-gray-400 hover:text-white transition-colors text-sm"
                 >
                   Terms of Service
-                </Link>
-                <Link
-                  to="/support"
+                </button>
+                <button
+                  onClick={() => handleNavClick("/support")}
                   className="text-gray-400 hover:text-white transition-colors text-sm"
                 >
                   Support
-                </Link>
+                </button>
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Upload, User, Mail, Phone, MapPin, Briefcase, FileText } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Upload, User, Phone, MapPin, Briefcase, FileText } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignupHelper: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,7 +10,6 @@ const SignupHelper: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
-    email: '',
     occupation: '',
     location: '',
     username: '',
@@ -17,6 +17,9 @@ const SignupHelper: React.FC = () => {
     password: '',
     confirmPassword: ''
   });
+
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const occupations = [
     'Electrician',
@@ -35,14 +38,39 @@ const SignupHelper: React.FC = () => {
     'Other'
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Helper registration:', formData);
-    alert('Registration successful! Welcome to Go Local.');
+
+    // Validate mobile number (basic Indian mobile number validation)
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!mobileRegex.test(formData.mobile)) {
+      alert('Please enter a valid 10-digit mobile number');
+      return;
+    }
+
+    try {
+      const success = await register({
+        name: formData.name,
+        phone: formData.mobile,
+        location: formData.location,
+        role: 'provider',
+        serviceCategory: formData.occupation,
+        description: formData.description
+      }, formData.password);
+
+      if (success) {
+        alert('Registration successful! Welcome to Go Local.');
+        navigate('/provider-dashboard');
+      } else {
+        alert('Registration failed. Please try again.');
+      }
+    } catch (error) {
+      alert('Registration failed. Please try again.');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -135,35 +163,16 @@ const SignupHelper: React.FC = () => {
                       value={formData.mobile}
                       onChange={handleChange}
                       required
+                      pattern="[6-9][0-9]{9}"
                       className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
-                      placeholder="Your phone number"
+                      placeholder="10-digit mobile number"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Email and Occupation */}
+              {/* Occupation and Location */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                      <Mail className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                </div>
                 <div>
                   <label htmlFor="occupation" className="block text-sm font-medium text-gray-700 mb-2">
                     Service Category
@@ -187,10 +196,6 @@ const SignupHelper: React.FC = () => {
                     </select>
                   </div>
                 </div>
-              </div>
-
-              {/* Location and Photo */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
                     Service Location
@@ -211,9 +216,28 @@ const SignupHelper: React.FC = () => {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Username and Photo */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
+                    placeholder="Choose a unique username"
+                  />
+                </div>
                 <div>
                   <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">
-                    Profile Photo
+                    Profile Photo (Optional)
                   </label>
                   <div className="relative">
                     <input
@@ -234,41 +258,24 @@ const SignupHelper: React.FC = () => {
                 </div>
               </div>
 
-              {/* Username and Description */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
-                    placeholder="Choose a unique username"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                    Service Description
-                  </label>
-                  <div className="relative">
-                    <div className="absolute top-3 left-3">
-                      <FileText className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none bg-white/80"
-                      placeholder="Brief description of your skills and experience"
-                    />
+              {/* Description */}
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                  Service Description
+                </label>
+                <div className="relative">
+                  <div className="absolute top-3 left-3">
+                    <FileText className="h-5 w-5 text-gray-400" />
                   </div>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none bg-white/80"
+                    placeholder="Brief description of your skills and experience"
+                  />
                 </div>
               </div>
 
@@ -363,7 +370,7 @@ const SignupHelper: React.FC = () => {
                   🔧
                 </div>
                 <div className="absolute -bottom-4 -left-4 bg-white text-gray-900 p-4 rounded-2xl shadow-lg">
-                  <div className="text-2xl font-bold text-blue-600">15K+</div>
+                  <div className="text-2xl font-bold text-blue-600">8K+</div>
                   <div className="text-sm text-gray-600">Active Providers</div>
                 </div>
               </div>
@@ -378,7 +385,7 @@ const SignupHelper: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">₹2,500</div>
+                  <div className="text-2xl font-bold text-blue-600 mb-1">₹1,500</div>
                   <div className="text-gray-600">Avg. Daily Earnings</div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Upload, User, Mail, Phone, MapPin } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Upload, User, Phone, MapPin } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignupCustomer: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,21 +10,46 @@ const SignupCustomer: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
-    email: '',
     location: '',
     username: '',
     password: '',
     confirmPassword: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Customer registration:', formData);
-    alert('Registration successful! Welcome to Go Local.');
+
+    // Validate mobile number (basic Indian mobile number validation)
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!mobileRegex.test(formData.mobile)) {
+      alert('Please enter a valid 10-digit mobile number');
+      return;
+    }
+
+    try {
+      const success = await register({
+        name: formData.name,
+        phone: formData.mobile,
+        location: formData.location,
+        role: 'customer'
+      }, formData.password);
+
+      if (success) {
+        alert('Registration successful! Welcome to Go Local.');
+        navigate('/customer-dashboard');
+      } else {
+        alert('Registration failed. Please try again.');
+      }
+    } catch (error) {
+      alert('Registration failed. Please try again.');
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,35 +147,16 @@ const SignupCustomer: React.FC = () => {
                         value={formData.mobile}
                         onChange={handleChange}
                         required
+                        pattern="[6-9][0-9]{9}"
                         className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-white/80"
-                        placeholder="Your phone number"
+                        placeholder="10-digit mobile number"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Email and Location */}
+                {/* Location and Username */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                        <Mail className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-white/80"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                  </div>
                   <div>
                     <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
                       Your Location
@@ -170,31 +177,6 @@ const SignupCustomer: React.FC = () => {
                       />
                     </div>
                   </div>
-                </div>
-
-                {/* Photo and Username */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">
-                      Profile Photo
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="file"
-                        id="photo"
-                        name="photo"
-                        accept="image/*"
-                        className="hidden"
-                      />
-                      <label
-                        htmlFor="photo"
-                        className="w-full flex items-center justify-center px-3 py-3 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors bg-white/80"
-                      >
-                        <Upload className="h-5 w-5 text-gray-400 mr-2" />
-                        <span className="text-gray-600">Upload Photo</span>
-                      </label>
-                    </div>
-                  </div>
                   <div>
                     <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                       Username
@@ -209,6 +191,29 @@ const SignupCustomer: React.FC = () => {
                       className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-white/80"
                       placeholder="Choose a username"
                     />
+                  </div>
+                </div>
+
+                {/* Photo */}
+                <div>
+                  <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">
+                    Profile Photo (Optional)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="photo"
+                      name="photo"
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="photo"
+                      className="w-full flex items-center justify-center px-3 py-3 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors bg-white/80"
+                    >
+                      <Upload className="h-5 w-5 text-gray-400 mr-2" />
+                      <span className="text-gray-600">Upload Photo</span>
+                    </label>
                   </div>
                 </div>
 
@@ -304,7 +309,7 @@ const SignupCustomer: React.FC = () => {
                   ⭐
                 </div>
                 <div className="absolute -bottom-4 -left-4 bg-white text-gray-900 p-4 rounded-2xl shadow-lg">
-                  <div className="text-2xl font-bold text-indigo-600">50K+</div>
+                  <div className="text-2xl font-bold text-indigo-600">25K+</div>
                   <div className="text-sm text-gray-600">Happy Customers</div>
                 </div>
               </div>
@@ -323,7 +328,7 @@ const SignupCustomer: React.FC = () => {
                   <div className="text-gray-600">Customer Support</div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">15K+</div>
+                  <div className="text-2xl font-bold text-purple-600 mb-1">8K+</div>
                   <div className="text-gray-600">Verified Providers</div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">

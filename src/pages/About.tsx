@@ -1,43 +1,22 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, Users, Target, Heart, Award, Globe, Shield } from 'lucide-react';
+import { Mail, Phone, MapPin, Users, Target, Heart, Award, Globe, Shield } from 'lucide-react';
 
 const About: React.FC = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    message: ''
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    setFormData({ firstName: '', lastName: '', email: '', message: '' });
-    alert('Thank you for your message! We\'ll get back to you soon.');
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
   const teamMembers = [
     {
-      name: 'Alex Johnson',
+      name: 'Arjun Sharma',
       role: 'CEO & Founder',
       image: 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=300',
       description: 'Passionate about connecting communities and supporting local businesses.'
     },
     {
-      name: 'Sarah Chen',
+      name: 'Priya Patel',
       role: 'Head of Operations',
       image: 'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg?auto=compress&cs=tinysrgb&w=300',
       description: 'Ensures smooth operations and exceptional customer experiences.'
     },
     {
-      name: 'Michael Rodriguez',
+      name: 'Rajesh Kumar',
       role: 'Lead Developer',
       image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=300',
       description: 'Building the technology that powers our platform and community.'
@@ -134,11 +113,11 @@ const About: React.FC = () => {
                 className="rounded-2xl shadow-2xl"
               />
               <div className="absolute -top-6 -right-6 bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-2xl shadow-lg">
-                <div className="text-3xl font-bold">15K+</div>
+                <div className="text-3xl font-bold">8K+</div>
                 <div className="text-sm">Verified Providers</div>
               </div>
               <div className="absolute -bottom-6 -left-6 bg-white text-gray-900 p-6 rounded-2xl shadow-lg">
-                <div className="text-3xl font-bold text-blue-600">50K+</div>
+                <div className="text-3xl font-bold text-blue-600">25K+</div>
                 <div className="text-sm text-gray-600">Happy Customers</div>
               </div>
             </div>
@@ -240,7 +219,7 @@ const About: React.FC = () => {
               
               <div className="grid grid-cols-2 gap-6">
                 <div className="bg-white p-6 rounded-xl shadow-lg">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">125K+</div>
+                  <div className="text-3xl font-bold text-blue-600 mb-2">75K+</div>
                   <div className="text-sm text-gray-600">Jobs Completed</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg">
@@ -258,134 +237,50 @@ const About: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Get In Touch
+              Contact Information
             </h2>
             <p className="text-xl text-gray-600">
-              Have questions? We'd love to hear from you and help you get started.
+              Get in touch with us for any questions or support
             </p>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Contact Form */}
-            <div className="bg-gradient-to-br from-gray-50 to-blue-50 p-8 rounded-2xl">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                      placeholder="John"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                      placeholder="Doe"
-                    />
-                  </div>
+          <div className="max-w-4xl mx-auto">
+            {/* Contact Information */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Mail className="h-8 w-8 text-blue-600" />
                 </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                    placeholder="john@example.com"
-                  />
+                <h3 className="font-semibold text-gray-900 text-lg mb-2">Email</h3>
+                <p className="text-gray-600">support@golocal.com</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Phone className="h-8 w-8 text-green-600" />
                 </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
-                    placeholder="Tell us how we can help you..."
-                  />
+                <h3 className="font-semibold text-gray-900 text-lg mb-2">Phone</h3>
+                <p className="text-gray-600">+91 98765 43210</p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="h-8 w-8 text-orange-600" />
                 </div>
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2 transform hover:scale-105"
-                >
-                  <Send className="h-5 w-5" />
-                  <span>Send Message</span>
-                </button>
-              </form>
+                <h3 className="font-semibold text-gray-900 text-lg mb-2">Office</h3>
+                <p className="text-gray-600">123 Tech Park, Chennai<br />Tamil Nadu 600001</p>
+              </div>
             </div>
 
-            {/* Contact Information */}
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
-                      <Mail className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-lg">Email</p>
-                      <p className="text-gray-600">support@golocal.com</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
-                      <Phone className="h-8 w-8 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-lg">Phone</p>
-                      <p className="text-gray-600">+1 (555) 123-4567</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center">
-                      <MapPin className="h-8 w-8 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-lg">Office</p>
-                      <p className="text-gray-600">123 Community Street<br />Local City, LC 10001</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl">
-                <h4 className="text-xl font-bold mb-4">Quick Response Guarantee</h4>
-                <p className="text-blue-100 mb-6">
-                  We typically respond to all inquiries within 2 hours during business hours. 
-                  For urgent matters, please call our support line directly.
-                </p>
-                <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium">Online Support Available</span>
-                </div>
+            <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl text-center">
+              <h4 className="text-xl font-bold mb-4">Quick Response Guarantee</h4>
+              <p className="text-blue-100 mb-6">
+                We typically respond to all inquiries within 2 hours during business hours. 
+                For urgent matters, please call our support line directly.
+              </p>
+              <div className="flex items-center justify-center space-x-3">
+                <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium">Online Support Available</span>
               </div>
             </div>
           </div>

@@ -13,10 +13,8 @@ import {
   Clock,
   Award,
   Zap,
-  Heart,
   TrendingUp,
   MapPin,
-  Play,
   ChevronRight,
   Sparkles,
   Target,
@@ -73,7 +71,7 @@ const Home: React.FC = () => {
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
+      name: "Priya Sharma",
       rating: 5,
       comment:
         "Found an amazing electrician through Go Local. Professional service and fair pricing! The platform made it so easy to connect with local professionals.",
@@ -83,7 +81,7 @@ const Home: React.FC = () => {
       location: "Chennai",
     },
     {
-      name: "Michael Chen",
+      name: "Rajesh Kumar",
       rating: 5,
       comment:
         "Quick response time and excellent quality work. The search feature helped me find exactly what I needed in my neighborhood.",
@@ -93,7 +91,7 @@ const Home: React.FC = () => {
       location: "Mumbai",
     },
     {
-      name: "Emily Davis",
+      name: "Anita Patel",
       rating: 5,
       comment:
         "Great experience from start to finish. The helper was punctual and did exceptional work. Go Local is my go-to platform now!",
@@ -107,28 +105,21 @@ const Home: React.FC = () => {
   const stats = [
     {
       icon: Users,
-      value: "50,000+",
+      value: "25,000+",
       label: "Happy Customers",
       color: "text-blue-600",
       bg: "bg-blue-100",
     },
     {
       icon: CheckCircle,
-      value: "125,000+",
+      value: "75,000+",
       label: "Jobs Completed",
       color: "text-green-600",
       bg: "bg-green-100",
     },
     {
-      icon: Star,
-      value: "4.9/5",
-      label: "Average Rating",
-      color: "text-yellow-600",
-      bg: "bg-yellow-100",
-    },
-    {
       icon: Award,
-      value: "15,000+",
+      value: "8,000+",
       label: "Verified Providers",
       color: "text-purple-600",
       bg: "bg-purple-100",
@@ -183,7 +174,7 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-hero-gradient text-white py-32 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-orange-400 via-red-500 to-pink-600 text-white py-32 overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-32 h-32 bg-white opacity-10 rounded-full animate-float"></div>
@@ -206,13 +197,6 @@ const Home: React.FC = () => {
             <div
               className={`transition-all duration-1000 ${isVisible ? "animate-slide-down" : "opacity-0"}`}
             >
-              <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 mb-8">
-                <Sparkles className="h-5 w-5 mr-2 text-yellow-300" />
-                <span className="text-sm font-semibold">
-                  India's #1 Local Service Platform
-                </span>
-              </div>
-
               <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
                 Find Local
                 <span className="block text-gradient text-glow typing-animation">
@@ -220,7 +204,7 @@ const Home: React.FC = () => {
                 </span>
               </h1>
 
-              <p className="text-2xl mb-12 text-blue-100 leading-relaxed max-w-4xl mx-auto">
+              <p className="text-2xl mb-12 text-orange-100 leading-relaxed max-w-4xl mx-auto">
                 Connect with skilled professionals in your neighborhood. From
                 home repairs to personal services, discover trusted local
                 experts who care about your community.
@@ -253,15 +237,10 @@ const Home: React.FC = () => {
                 <Zap className="mr-2 h-5 w-5" />
                 Become a Provider
               </Link>
-
-              <button className="group bg-white/20 backdrop-blur-sm text-white px-8 py-5 rounded-2xl font-semibold text-lg hover:bg-white/30 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
-                <Play className="mr-2 h-5 w-5" />
-                Watch Demo
-              </button>
             </div>
 
             {/* Trust Indicators */}
-            <div className="mt-16 flex flex-wrap justify-center items-center gap-8 text-blue-200">
+            <div className="mt-16 flex flex-wrap justify-center items-center gap-8 text-orange-200">
               <div className="flex items-center">
                 <Shield className="h-6 w-6 mr-2 text-green-300" />
                 <span className="font-semibold">100% Verified</span>
@@ -269,10 +248,6 @@ const Home: React.FC = () => {
               <div className="flex items-center">
                 <Star className="h-6 w-6 mr-2 text-yellow-300" />
                 <span className="font-semibold">4.9★ Rating</span>
-              </div>
-              <div className="flex items-center">
-                <Users className="h-6 w-6 mr-2 text-blue-300" />
-                <span className="font-semibold">50K+ Customers</span>
               </div>
               <div className="flex items-center">
                 <Clock className="h-6 w-6 mr-2 text-purple-300" />
@@ -286,7 +261,7 @@ const Home: React.FC = () => {
       {/* Stats Section */}
       <section className="py-20 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
               <div
                 key={index}
@@ -484,7 +459,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-premium-gradient text-white relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-orange-400 via-red-500 to-pink-600 text-white relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 right-20 w-40 h-40 bg-white opacity-5 rounded-full animate-float"></div>
           <div
@@ -494,15 +469,10 @@ const Home: React.FC = () => {
         </div>
 
         <div className="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 mb-8">
-            <Target className="h-5 w-5 mr-2" />
-            <span className="font-semibold">Join 50,000+ Happy Users</span>
-          </div>
-
           <h2 className="text-5xl md:text-6xl font-bold mb-8">
             Ready to Go Local?
           </h2>
-          <p className="text-2xl mb-12 text-blue-100 leading-relaxed">
+          <p className="text-2xl mb-12 text-orange-100 leading-relaxed">
             Join thousands of satisfied customers and professional service
             providers in your community today
           </p>
@@ -525,7 +495,7 @@ const Home: React.FC = () => {
             </Link>
           </div>
 
-          <div className="flex flex-wrap justify-center items-center gap-8 text-blue-200">
+          <div className="flex flex-wrap justify-center items-center gap-8 text-orange-200">
             <div className="flex items-center">
               <CheckCircle className="h-6 w-6 mr-2" />
               <span className="font-semibold">Free to Join</span>
@@ -533,10 +503,6 @@ const Home: React.FC = () => {
             <div className="flex items-center">
               <Shield className="h-6 w-6 mr-2" />
               <span className="font-semibold">Verified Professionals</span>
-            </div>
-            <div className="flex items-center">
-              <Heart className="h-6 w-6 mr-2" />
-              <span className="font-semibold">Community Focused</span>
             </div>
             <div className="flex items-center">
               <Globe className="h-6 w-6 mr-2" />
