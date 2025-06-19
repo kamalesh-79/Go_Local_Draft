@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Upload, User, Phone, MapPin, Briefcase, FileText } from 'lucide-react';
+import { Eye, EyeOff, User, Phone, MapPin, Briefcase, FileText, Loader, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const SignupHelper: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [userType, setUserType] = useState<'helper' | 'customer'>('helper');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [formData, setFormData] = useState({
     name: '',
-    mobile: '',
-    occupation: '',
-    location: '',
     username: '',
+    email: '',
+    phone: '',
+    serviceType: '',
+    location: '',
     description: '',
     password: '',
     confirmPassword: ''
   });
 
-  const { register } = useAuth();
+  const { register, loading } = useAuth();
   const navigate = useNavigate();
 
-  const occupations = [
+  const serviceTypes = [
     'Electrician',
     'Plumber',
     'Carpenter',
@@ -40,36 +42,42 @@ const SignupHelper: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
+
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      setError('Passwords do not match!');
       return;
     }
 
-    // Validate mobile number (basic Indian mobile number validation)
     const mobileRegex = /^[6-9]\d{9}$/;
-    if (!mobileRegex.test(formData.mobile)) {
-      alert('Please enter a valid 10-digit mobile number');
+    if (!mobileRegex.test(formData.phone)) {
+      setError('Please enter a valid 10-digit mobile number');
       return;
     }
 
     try {
       const success = await register({
         name: formData.name,
-        phone: formData.mobile,
+        username: formData.username,
+        email: formData.email,
+        phone: formData.phone,
+        serviceType: formData.serviceType,
         location: formData.location,
-        role: 'provider',
-        serviceCategory: formData.occupation,
-        description: formData.description
-      }, formData.password);
+        description: formData.description,
+        password: formData.password
+      }, 'provider');
 
       if (success) {
-        alert('Registration successful! Welcome to Go Local.');
-        navigate('/provider-dashboard');
+        setSuccess('Registration successful! Redirecting...');
+        setTimeout(() => {
+          navigate('/provider-dashboard');
+        }, 1000);
       } else {
-        alert('Registration failed. Please try again.');
+        setError('Registration failed. Please try again.');
       }
     } catch (error) {
-      alert('Registration failed. Please try again.');
+      setError('Registration failed. Please try again.');
     }
   };
 
@@ -81,38 +89,20 @@ const SignupHelper: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 opacity-30 rounded-full animate-float"></div>
-        <div className="absolute top-32 right-20 w-16 h-16 bg-purple-200 opacity-40 rounded-full animate-float" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-indigo-200 opacity-35 rounded-full animate-float" style={{animationDelay: '2s'}}></div>
-      </div>
-
-      <div className="max-w-6xl mx-auto relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Join as a Service Provider
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Share your skills with the community and start earning today
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Join as a Service Provider</h1>
+          <p className="text-gray-600 text-lg">Share your skills with the community and start earning today</p>
         </div>
 
         {/* User Type Toggle */}
         <div className="bg-white/80 backdrop-blur-sm p-1 rounded-xl mb-8 max-w-xs mx-auto shadow-lg">
           <div className="grid grid-cols-2 gap-1">
-            <button
-              onClick={() => setUserType('helper')}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
-                userType === 'helper'
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
+            <div className="py-3 px-4 rounded-lg text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg text-center">
               🔧 Service Provider
-            </button>
+            </div>
             <Link
               to="/signup/customer"
               className="py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 text-center"
@@ -126,7 +116,7 @@ const SignupHelper: React.FC = () => {
           {/* Form */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name and Mobile */}
+              {/* Name and Username */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -149,7 +139,41 @@ const SignupHelper: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
+                    placeholder="Choose a unique username"
+                  />
+                </div>
+              </div>
+
+              {/* Email and Phone */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
+                    placeholder="Your email address"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                     Mobile Number
                   </label>
                   <div className="relative">
@@ -158,9 +182,9 @@ const SignupHelper: React.FC = () => {
                     </div>
                     <input
                       type="tel"
-                      id="mobile"
-                      name="mobile"
-                      value={formData.mobile}
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
                       onChange={handleChange}
                       required
                       pattern="[6-9][0-9]{9}"
@@ -171,10 +195,10 @@ const SignupHelper: React.FC = () => {
                 </div>
               </div>
 
-              {/* Occupation and Location */}
+              {/* Service Type and Location */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="occupation" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="serviceType" className="block text-sm font-medium text-gray-700 mb-2">
                     Service Category
                   </label>
                   <div className="relative">
@@ -182,16 +206,16 @@ const SignupHelper: React.FC = () => {
                       <Briefcase className="h-5 w-5 text-gray-400" />
                     </div>
                     <select
-                      id="occupation"
-                      name="occupation"
-                      value={formData.occupation}
+                      id="serviceType"
+                      name="serviceType"
+                      value={formData.serviceType}
                       onChange={handleChange}
                       required
                       className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors appearance-none bg-white/80"
                     >
                       <option value="">Select your service</option>
-                      {occupations.map((occ) => (
-                        <option key={occ} value={occ}>{occ}</option>
+                      {serviceTypes.map((type) => (
+                        <option key={type} value={type}>{type}</option>
                       ))}
                     </select>
                   </div>
@@ -214,46 +238,6 @@ const SignupHelper: React.FC = () => {
                       className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
                       placeholder="Your city/area"
                     />
-                  </div>
-                </div>
-              </div>
-
-              {/* Username and Photo */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white/80"
-                    placeholder="Choose a unique username"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">
-                    Profile Photo (Optional)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="photo"
-                      name="photo"
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="photo"
-                      className="w-full flex items-center justify-center px-3 py-3 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors bg-white/80"
-                    >
-                      <Upload className="h-5 w-5 text-gray-400 mr-2" />
-                      <span className="text-gray-600">Upload Photo</span>
-                    </label>
                   </div>
                 </div>
               </div>
@@ -339,17 +323,42 @@ const SignupHelper: React.FC = () => {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
-              >
-                Register as Service Provider
-              </button>
+              {/* Submit Button */}
+              <div className="space-y-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {loading ? (
+                    <>
+                      <Loader className="animate-spin h-5 w-5 mr-2" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    'Register as Service Provider'
+                  )}
+                </button>
+
+                {error && (
+                  <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                    <XCircle className="h-5 w-5" />
+                    <span className="text-sm">{error}</span>
+                  </div>
+                )}
+
+                {success && (
+                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-3 rounded-lg">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="text-sm">{success}</span>
+                  </div>
+                )}
+              </div>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Already have an account? {' '}
+                Already have an account?{' '}
                 <Link to="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
                   Sign in here
                 </Link>
@@ -364,9 +373,9 @@ const SignupHelper: React.FC = () => {
                 <img
                   src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=400"
                   alt="Professional worker"
-                  className="w-80 h-80 object-cover rounded-3xl shadow-2xl animate-float"
+                  className="w-80 h-80 object-cover rounded-3xl shadow-2xl"
                 />
-                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-2xl shadow-lg animate-bounce">
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-2xl shadow-lg">
                   🔧
                 </div>
                 <div className="absolute -bottom-4 -left-4 bg-white text-gray-900 p-4 rounded-2xl shadow-lg">
@@ -382,25 +391,6 @@ const SignupHelper: React.FC = () => {
                 Showcase your skills, connect with local customers, and build your reputation 
                 in our trusted community of service providers.
               </p>
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">₹1,500</div>
-                  <div className="text-gray-600">Avg. Daily Earnings</div>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                  <div className="text-2xl font-bold text-green-600 mb-1">4.8★</div>
-                  <div className="text-gray-600">Avg. Provider Rating</div>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">24/7</div>
-                  <div className="text-gray-600">Support Available</div>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                  <div className="text-2xl font-bold text-orange-600 mb-1">Free</div>
-                  <div className="text-gray-600">To Join & Use</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
